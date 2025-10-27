@@ -8,9 +8,9 @@ The following security files have been added to your repository:
 
 1. `.github/dependabot.yml` - Controls Dependabot behavior (monthly updates instead of weekly)
 2. `.github/CODEOWNERS` - Defines code ownership (only you can approve changes)
-3. `.github/SECURITY.md` - Security policy for your repository
-4. `.github/pull_request_template.md` - PR template that warns unauthorized users
-5. `.github/workflows/close-unauthorized.yml` - Automatically closes unauthorized PRs/issues
+3. `.github/SECURITY.md` - Security policy defining contribution rules
+4. `.github/pull_request_template.md` - PR template with strict requirements
+5. `.github/workflows/close-unauthorized.yml` - Manages external contributions automatically
 
 ## Required GitHub Settings (Manual Configuration)
 
@@ -106,14 +106,35 @@ If you're still getting spam emails, create a filter:
 2. With subject containing: `dependabot` or `Pull request`
 3. Move to folder: "GitHub/Automated"
 
-## Testing Your Security Setup
+## How the Security Setup Works
 
 After committing these changes:
 
-1. The `close-unauthorized.yml` workflow will automatically close PRs/issues from non-authorized users
-2. Dependabot will only create PRs monthly instead of weekly
-3. CODEOWNERS will ensure only you can approve changes
-4. Branch protection rules (once set) will prevent force pushes
+### For Pull Requests from External Contributors:
+1. **PRs stay open** but get labeled `external-contribution` and `needs-owner-review`
+2. **Auto-comment** explains the strict review criteria
+3. **You decide** whether to accept, request changes, or close
+4. **Only you can merge** - CODEOWNERS enforces your approval
+5. **Legitimate bug fixes are allowed**, but you review everything
+
+### For Issues from External Contributors:
+1. **Auto-closed immediately** to prevent spam
+2. **Comment directs** security reports to private email
+3. **Reduces inbox noise** from random issues
+
+### What This Means:
+- ✅ Qualified contributors CAN submit PRs for serious bugs/security issues
+- ✅ Those PRs stay open for your review (not auto-closed)
+- ✅ YOU decide what's legitimate and what's spam
+- ✅ Nothing merges without your explicit approval
+- ✅ Even pros/team members must get your sign-off
+- ✅ Layout/design changes are explicitly rejected unless you approve
+- ✅ You review ALL code before it goes live
+
+### Dependabot Behavior:
+- Creates PRs monthly instead of weekly (reduces spam)
+- Limited to 3 concurrent PRs max
+- All PRs assigned to you for review
 
 ## Commit These Changes
 
@@ -137,9 +158,19 @@ git push
 
 These changes will:
 - ✅ Reduce Dependabot spam (monthly instead of weekly)
-- ✅ Auto-close unauthorized PRs and issues
-- ✅ Clearly mark you as the only code owner
-- ✅ Warn people this is a private repository
-- ✅ Provide security guidelines
+- ✅ Auto-close spam issues immediately
+- ✅ Allow legitimate bug fix PRs (but require your approval)
+- ✅ Clearly mark you as the only code owner with merge rights
+- ✅ Enforce that ALL changes need your explicit approval
+- ✅ Reject layout/design changes unless you approve
+- ✅ Make it clear even pros/team members must get your sign-off
+- ✅ Provide clear contribution guidelines
 
-You'll still get security alerts (important!), but much less spam from random people trying to contribute.
+### What You Can Expect:
+- **Spam issues:** Closed immediately
+- **Legitimate bug fix PRs:** Stay open for your review
+- **Layout/feature PRs:** You can reject immediately
+- **All PRs:** Nothing merges without your approval
+- **Dependabot:** Monthly updates, not weekly spam
+
+You maintain complete control while allowing qualified contributors to help with serious issues (only if you approve).

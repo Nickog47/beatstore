@@ -1,4 +1,4 @@
-name: Close Unauthorized PRs and Issues
+name: Manage External Contributions
 
 on:
   pull_request_target:
@@ -7,10 +7,10 @@ on:
     types: [opened]
 
 jobs:
-  close-unauthorized:
+  manage-external-contributions:
     runs-on: ubuntu-latest
     steps:
-      - name: Check if contributor is authorized
+      - name: Handle external contributions
         if: github.actor != 'Nickog47' && github.actor != 'dependabot[bot]'
         uses: actions/github-script@v6
         with:
@@ -19,28 +19,82 @@ jobs:
             const isPR = context.eventName === 'pull_request_target';
             const number = isPR ? context.payload.pull_request.number : context.payload.issue.number;
 
-            const message = `Thank you for your interest, but this is a private repository. Pull requests and issues from unauthorized contributors are not accepted.\n\nOnly the repository owner is authorized to make changes.\n\nThis ${isPR ? 'pull request' : 'issue'} will be closed automatically.`;
+            if (isPR) {
+              // For Pull Requests - Allow them to stay open but add warning label
+              const prMessage = `## ⚠️ External Contribution - Requires Owner Approval
 
-            // Add comment
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: number,
-              body: message
-            });
+Thank you for your pull request. Please note:
 
-            // Close the PR or issue
-            await github.rest.issues.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: number,
-              state: 'closed'
-            });
+**This PR will be reviewed under the following criteria:**
+- ✅ Fixes a serious/critical issue (bugs, security vulnerabilities, breaking errors)
+- ✅ Does NOT change layout, design, or core functionality without explicit approval
+- ✅ Code quality meets project standards
+- ❌ Changes to styling, UI/UX, or feature requests will be rejected
 
-            // Lock the conversation to prevent further spam
-            await github.rest.issues.lock({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: number,
-              lock_reason: 'spam'
-            });
+**Important:**
+- This PR requires explicit approval from @Nickog47 before it can be merged
+- CODEOWNERS rules enforce that only @Nickog47 can approve changes
+- Branch protection ensures nothing merges without review
+- If this is spam or low-quality, it will be closed immediately
+
+**If you are submitting a legitimate bug fix or security patch, please:**
+1. Clearly describe the issue being fixed
+2. Provide steps to reproduce the bug
+3. Explain your solution
+4. Include test results if applicable
+
+The repository owner will review this PR and decide whether to accept, request changes, or close it.`;
+
+              // Add comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: number,
+                body: prMessage
+              });
+
+              // Add labels
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: number,
+                labels: ['external-contribution', 'needs-owner-review']
+              });
+
+            } else {
+              // For Issues - Close spam issues automatically
+              const issueMessage = `Thank you for opening an issue, but this is a private repository.
+
+**Issues from external contributors are not accepted** unless you are reporting a critical security vulnerability.
+
+If you found a **security vulnerability**, please:
+- DO NOT post details publicly
+- Email the repository owner directly
+- Include steps to reproduce and severity assessment
+
+This issue will be closed. If this is a legitimate security report, please contact the owner privately.`;
+
+              // Add comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: number,
+                body: issueMessage
+              });
+
+              // Close the issue
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: number,
+                state: 'closed'
+              });
+
+              // Add label for tracking
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: number,
+                labels: ['external-issue', 'auto-closed']
+              });
+            }
