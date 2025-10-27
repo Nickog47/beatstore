@@ -5,7 +5,7 @@ const { auth } = require("../middleware/auth");
 const { Order } = require("../models/Order");
 const { Payment } = require("../models/Payment");
 const { Beat } = require("../models/Beat");
-const { stripeSecret } = require("../config/key");
+const { stripeSecret, clientUrl } = require("../config/key");
 const stripe = require('stripe')(stripeSecret);
 const generateurl = require('../services/generateurl');
 const generateSignedUrl = generateurl.generateSignedUrl;
@@ -31,8 +31,8 @@ router.post("/createSession", auth, async (req, res) => {
         payment_method_types: ['card'],
         line_items: req.body.line_items,
         mode: 'payment',
-        success_url: 'http://localhost:3000/download?session_id={CHECKOUT_SESSION_ID}',
-        cancel_url: 'http://localhost:3000/cart',
+        success_url: `${clientUrl}/download?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${clientUrl}/cart`,
     };
     if (req.isAuth) {
         // without the JSON methods, Stripe will crash because apparently req.user._id is not a string?

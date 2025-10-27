@@ -12,6 +12,7 @@ module.exports = {
     jwtSecret: '',
     stripeSecret: '',
     endpointSecret: '',
+    clientUrl: 'http://localhost:3000',
     s3SecretAccessKey: '',
     s3AccessKeyId: '',
     s3PublicBucket: '',
@@ -32,6 +33,7 @@ module.exports = {
 |jwtSecret|JWT Secret|
 |stripeSecret|Stripe Secret Key|
 |endpointSecret|Stripe Webhook Endpoint Secret|
+|clientUrl|Frontend URL (e.g., http://localhost:3000 for dev, your production URL for prod)|
 |s3SecretAccessKey|AWS Secret Key (S3 permissions)|
 |s3AccessKeyId|AWS Access Key ID (S3 permissions)|
 |s3PublicBucket|S3 bucket name for public files|
@@ -40,7 +42,16 @@ module.exports = {
 
 ## Production
 
-Add the same properties as above to your environment variables.
+Add the same properties as above to your environment variables:
+- `MONGODB_URI`
+- `JWT_SECRET`
+- `STRIPE_SECRET`
+- `STRIPE_ENDPOINT_SECRET`
+- `CLIENT_URL` (your production frontend URL)
+- `S3_SECRET_KEY`
+- `S3_ACCESS_KEY`
+- `S3_PUBLIC_BUCKET`
+- `S3_PRIVATE_BUCKET`
 
 ## Acknowledgments
 
