@@ -1,0 +1,44 @@
+# Dependabot configuration to control automated dependency updates
+# This reduces spam from dependency update PRs
+
+version: 2
+updates:
+  # Server dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "monthly"  # Changed from default weekly to monthly
+    open-pull-requests-limit: 3  # Limit concurrent PRs
+    reviewers:
+      - "Nickog47"  # Only you can review these PRs
+    labels:
+      - "dependencies"
+      - "automated"
+    commit-message:
+      prefix: "chore(deps)"
+
+  # Client dependencies
+  - package-ecosystem: "npm"
+    directory: "/client"
+    schedule:
+      interval: "monthly"  # Changed from default weekly to monthly
+    open-pull-requests-limit: 3  # Limit concurrent PRs
+    reviewers:
+      - "Nickog47"  # Only you can review these PRs
+    labels:
+      - "dependencies"
+      - "automated"
+    commit-message:
+      prefix: "chore(deps)"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 2
+    reviewers:
+      - "Nickog47"
+    labels:
+      - "ci/cd"
+      - "automated"

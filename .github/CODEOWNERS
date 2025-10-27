@@ -1,0 +1,15 @@
+# CODEOWNERS file - defines who owns and can approve changes to code
+# This prevents random people from having merge rights
+
+# Default owner for everything in the repo
+* @Nickog47
+
+# Critical configuration files - require your explicit approval
+/server/config/ @Nickog47
+/.github/ @Nickog47
+/package.json @Nickog47
+/client/package.json @Nickog47
+
+# Security-sensitive files
+*.env @Nickog47
+**/config/*.js @Nickog47
